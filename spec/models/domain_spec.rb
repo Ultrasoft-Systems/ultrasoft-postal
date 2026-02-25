@@ -70,6 +70,18 @@ describe Domain do
     it "generates a UUID" do
       expect { domain.save }.to change { domain.uuid }.from(nil).to(/[a-f0-9-]{36}/)
     end
+
+    it "generates a public token" do
+      expect { domain.save }.to change { domain.public_token }.from(nil).to(match(/\A[A-Za-z0-9]{24}\z/))
+    end
+  end
+
+  describe "#public_check_url" do
+    let(:domain) { create(:domain) }
+
+    it "returns a URL containing the public token" do
+      expect(domain.public_check_url).to eq "#{Postal.host_with_protocol}/domain-check/#{domain.public_token}"
+    end
   end
 
   describe ".verified" do

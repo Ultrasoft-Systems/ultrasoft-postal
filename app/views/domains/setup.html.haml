@@ -30,6 +30,13 @@
   - if @domain.dns_checked_at
     %p.u-margin We last checked the validity of your DNS records #{distance_of_time_in_words_to_now @domain.dns_checked_at} ago.
 
+  - if @domain.public_token.present?
+    .u-margin
+      %h3.pageContent__subTitle Public DNS Check Link
+      %p.pageContent__text
+        Share this link with your client so they can verify their DNS configuration without needing to log in.
+      %pre.codeBlock.u-margin= @domain.public_check_url
+
   %h3.pageContent__subTitle SPF Record
   - if @domain.spf_status == 'OK'
     %p.pageContent__text.u-green.u-bold

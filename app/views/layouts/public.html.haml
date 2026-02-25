@@ -1,0 +1,23 @@
+!!!
+%html.main
+  %head
+    %title #{page_title.reverse.join(' - ')}
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application/application', 'data-turbolinks-track' => 'reload'
+    %link{:href => asset_path('favicon.png'), :rel => 'shortcut icon'}
+    = yield :head
+  %body
+    = display_flash
+    %header.siteHeader
+      .siteHeader__inside
+        .siteHeader__logo= link_to "Postal", root_path
+        %p.siteHeader__version The open source e-mail platform
+
+    .siteContent
+      %section.siteContent__main
+        = yield
+        %footer.siteContent__footer
+          %ul.footer__links
+            %li.footer__name
+              Powered by
+              #{link_to "Postal", "https://postalserver.io", target: '_blank'}
