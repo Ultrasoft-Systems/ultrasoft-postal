@@ -19,6 +19,9 @@ Rails.application.routes.draw do
 
       # Organizations
       resources :organizations, param: :permalink, only: [:index, :show, :create, :update, :destroy] do
+        member do
+          get :domains
+        end
         resources :users, only: [:index, :create, :destroy], controller: "organization_users"
       end
 
