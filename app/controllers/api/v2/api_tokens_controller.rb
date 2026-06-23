@@ -2,7 +2,7 @@
 
 module API
   module V2
-    class ApiTokensController < BaseController
+    class APITokensController < BaseController
 
       before_action :check_read_permission!
 
