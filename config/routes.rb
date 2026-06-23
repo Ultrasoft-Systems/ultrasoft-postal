@@ -23,7 +23,12 @@ Rails.application.routes.draw do
           get :domains
         end
         resources :users, only: [:index, :create, :destroy], controller: "organization_users"
-        resources :domains, param: :uuid, only: [:destroy], controller: "organization_domains"
+        resources :domains, param: :uuid, only: [:destroy], controller: "organization_domains" do
+          member do
+            post :verify
+            post :check_dns
+          end
+        end
       end
 
       # Servers — scoped under organizations

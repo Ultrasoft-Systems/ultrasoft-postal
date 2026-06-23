@@ -162,13 +162,16 @@ module API
       # ---------------------------------------------------------------------------
 
       def resolve_server
-        if @current_server
-          @server = @current_server
+        if params[:org_permalink].present? && params[:server_permalink].present?
+          org = Organization.present.find_by_permalink!(params[:org_permalink])
+          @server = org.servers.present.find_by_permalink!(params[:server_permalink])
+        elsif params[:permalink].present? && @organization
+          @server = @organization.servers.present.find_by_permalink!(params[:permalink])
         elsif @current_organization
-          @server = @current_organization.servers.present.find_by_permalink!(params[:server_permalink])
+          @server = @current_organization.servers.present.find_by_permalink!(params[:server_permalink] || params[:permalink])
         elsif @current_api_token&.scope == "user"
           org = @current_user.organizations_scope.find_by_permalink!(params[:org_permalink])
-          @server = org.servers.present.find_by_permalink!(params[:server_permalink])
+          @server = org.servers.present.find_by_permalink!(params[:server_permalink] || params[:permalink])
         end
       end
 

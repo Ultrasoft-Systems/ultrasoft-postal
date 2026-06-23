@@ -32,6 +32,10 @@ module API
         domain = owner.domains.build(domain_params)
 
         if domain.save
+          # Auto-verify when token has admin permissions and skip_verification is set
+          if params[:skip_verification] && has_permission?("*")
+            domain.update!(verified_at: Time.current)
+          end
           render_created DomainSerializer.serialize(domain)
         else
           render_validation_error(domain)
@@ -48,6 +52,13 @@ module API
       # POST /api/v2/org/:org_permalink/servers/:permalink/domains/:uuid/verify
       def verify
         domain = find_domain
+
+        # Force-verify when token has wildcard permissions
+        if params[:force] && has_permission?("*")
+          domain.update!(verified_at: Time.current)
+          render_success DomainSerializer.serialize(domain)
+          return
+        end
 
         case domain.verification_method
         when "DNS"
