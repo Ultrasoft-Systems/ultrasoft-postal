@@ -2,7 +2,7 @@
 
 module API
   module V2
-    class IpAddressesController < BaseController
+    class IPAddressesController < BaseController
 
       before_action :check_read_permission!
 

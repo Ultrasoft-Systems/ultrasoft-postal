@@ -2,7 +2,7 @@
 
 module API
   module V2
-    class IpPoolsController < BaseController
+    class IPPoolsController < BaseController
 
       before_action :check_read_permission!
 

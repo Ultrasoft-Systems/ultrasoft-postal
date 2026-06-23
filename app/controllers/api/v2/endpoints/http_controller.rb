@@ -3,7 +3,7 @@
 module API
   module V2
     module Endpoints
-      class HttpController < BaseController
+      class HTTPController < BaseController
 
         before_action :require_organization!
         before_action :require_server!

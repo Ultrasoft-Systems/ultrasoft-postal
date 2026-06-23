@@ -8,7 +8,7 @@ module API
       # GET    /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
       # PATCH  /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
       # DELETE /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
-      class SmtpController < BaseController
+      class SMTPController < BaseController
 
         before_action :require_organization!
         before_action :require_server!

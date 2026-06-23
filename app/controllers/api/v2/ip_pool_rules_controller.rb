@@ -2,7 +2,7 @@
 
 module API
   module V2
-    class IpPoolRulesController < BaseController
+    class IPPoolRulesController < BaseController
 
       before_action :require_organization!
       before_action :require_server!
