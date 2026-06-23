@@ -34,7 +34,9 @@ module API
 
       DEFAULT_FIELDS = %i[
         uuid name verified verification_method outgoing incoming
-        spf_status dkim_status mx_status return_path_status created_at
+        spf_status dkim_status mx_status return_path_status
+        spf_record dkim_record dkim_record_name dkim_identifier
+        return_path_domain dns_checked_at created_at
       ].freeze
 
       INCLUSIONS = {}.freeze
