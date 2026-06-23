@@ -1,11 +1,117 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  # Legacy API Routes
+  # ───────────────────────────────────────────────────────────────────────────
+  # Legacy API v1 Routes
+  # ───────────────────────────────────────────────────────────────────────────
   match "/api/v1/send/message" => "legacy_api/send#message", via: [:get, :post, :patch, :put]
   match "/api/v1/send/raw" => "legacy_api/send#raw", via: [:get, :post, :patch, :put]
   match "/api/v1/messages/message" => "legacy_api/messages#message", via: [:get, :post, :patch, :put]
   match "/api/v1/messages/deliveries" => "legacy_api/messages#deliveries", via: [:get, :post, :patch, :put]
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # RESTful API v2 Routes
+  # ───────────────────────────────────────────────────────────────────────────
+  namespace :api do
+    namespace :v2 do
+      # Auth / API token management
+      resources :api_tokens, path: "auth/tokens", only: [:index, :create, :destroy]
+
+      # Organizations
+      resources :organizations, param: :permalink, only: [:index, :show, :create, :update, :destroy] do
+        resources :users, only: [:index, :create, :destroy], controller: "organization_users"
+      end
+
+      # Servers — scoped under organizations
+      scope "org/:org_permalink" do
+        resources :servers, param: :permalink, only: [:index, :show, :create, :update, :destroy] do
+          member do
+            post :suspend
+            post :unsuspend
+            get :queue
+            get :limits
+            get :stats
+          end
+
+          resources :domains, param: :uuid, only: [:index, :show, :create, :destroy] do
+            member do
+              post :verify
+              post :check_dns
+            end
+          end
+
+          resources :credentials, param: :uuid, only: [:index, :show, :create, :update, :destroy]
+
+          resources :routes, param: :uuid, only: [:index, :show, :create, :update, :destroy]
+
+          namespace :endpoints do
+            resources :smtp, param: :uuid, only: [:index, :show, :create, :update, :destroy],
+                      controller: "smtp"
+            resources :http, param: :uuid, only: [:index, :show, :create, :update, :destroy],
+                      controller: "http"
+            resources :address, param: :uuid, only: [:index, :show, :create, :update, :destroy],
+                      controller: "address"
+          end
+
+          resources :webhooks, param: :uuid, only: [:index, :show, :create, :update, :destroy] do
+            member do
+              get :history
+              post "retry/:request_uuid", action: :retry_request, as: :retry_request
+            end
+          end
+
+          resources :ip_pool_rules, param: :uuid, only: [:index, :create, :update, :destroy]
+
+          resources :track_domains, param: :uuid, only: [:index, :create, :update, :destroy] do
+            member do
+              post :toggle_ssl
+              post :check
+            end
+          end
+        end
+      end
+
+      # Messages — server resolved from auth scope
+      scope "messages" do
+        get "outgoing", to: "messages#outgoing"
+        get "incoming", to: "messages#incoming"
+        get "held", to: "messages#held"
+        get "suppressions", to: "messages#suppressions"
+        get ":id", to: "messages#show"
+        get ":id/deliveries", to: "messages#deliveries"
+        get ":id/attachments", to: "messages#attachments"
+        get ":id/attachment/:filename", to: "messages#attachment", as: :message_attachment
+        get ":id/plain", to: "messages#plain"
+        get ":id/html", to: "messages#html"
+        get ":id/headers", to: "messages#headers"
+        get ":id/activity", to: "messages#activity"
+        get ":id/spam_checks", to: "messages#spam_checks"
+        post ":id/retry", to: "messages#retry"
+        post ":id/cancel_hold", to: "messages#cancel_hold"
+        delete ":id", to: "messages#destroy"
+      end
+
+      # Send
+      post "send/message", to: "send#message"
+      post "send/raw", to: "send#raw"
+
+      # Suppressions — server resolved from auth scope
+      resources :suppressions, only: [:index, :create, :destroy]
+
+      # Statistics
+      get "stats/server/:org_permalink/:server_permalink", to: "stats#server", as: :server_stats
+      get "stats/organization/:org_permalink", to: "stats#organization", as: :organization_stats
+
+      # IP Pools (admin only)
+      resources :ip_pools, only: [:index, :show, :create, :update, :destroy] do
+        resources :ip_addresses, param: :uuid, only: [:index, :create, :update, :destroy]
+      end
+
+      # Users (admin only)
+      resources :users, param: :uuid, only: [:index, :show, :create, :update, :destroy]
+      post "users/invite", to: "users#invite"
+    end
+  end
 
   scope "org/:org_permalink", as: "organization" do
     resources :domains, only: [:index, :new, :create, :destroy] do

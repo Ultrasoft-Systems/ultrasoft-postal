@@ -1,0 +1,89 @@
+# frozen_string_literal: true
+
+module API
+  module V2
+    module Endpoints
+      # GET    /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp
+      # POST   /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp
+      # GET    /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
+      # PATCH  /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
+      # DELETE /api/v2/org/:org_permalink/servers/:permalink/endpoints/smtp/:uuid
+      class SmtpController < BaseController
+
+        before_action :require_organization!
+        before_action :require_server!
+        before_action :require_permission!
+
+        def index
+          endpoints = @server.smtp_endpoints.order(:name)
+          result = paginate(endpoints)
+          render_paginated(result[:records].map { |e| serialize_endpoint(e) }, result)
+        end
+
+        def show
+          endpoint = find_endpoint
+          render_success serialize_endpoint(endpoint)
+        end
+
+        def create
+          endpoint = @server.smtp_endpoints.build(endpoint_params)
+          if endpoint.save
+            render_created serialize_endpoint(endpoint)
+          else
+            render_validation_error(endpoint)
+          end
+        end
+
+        def update
+          endpoint = find_endpoint
+          if endpoint.update(endpoint_params)
+            render_success serialize_endpoint(endpoint)
+          else
+            render_validation_error(endpoint)
+          end
+        end
+
+        def destroy
+          endpoint = find_endpoint
+          endpoint.destroy!
+          render_destroyed
+        end
+
+        private
+
+        def find_endpoint
+          @server.smtp_endpoints.find_by_uuid!(params[:uuid])
+        rescue ActiveRecord::RecordNotFound
+          render_not_found("SMTP endpoint not found")
+          nil
+        end
+
+        def endpoint_params
+          params.permit(:name, :hostname, :port, :ssl_mode)
+        end
+
+        def serialize_endpoint(endpoint)
+          {
+            uuid: endpoint.uuid,
+            name: endpoint.name,
+            hostname: endpoint.hostname,
+            port: endpoint.port,
+            ssl_mode: endpoint.ssl_mode,
+            server_permalink: endpoint.server&.permalink,
+            created_at: endpoint.created_at&.iso8601,
+            updated_at: endpoint.updated_at&.iso8601,
+          }
+        end
+
+        def require_permission!
+          if action_name.in?(%w[index show])
+            require_any_permission!("endpoints.read", "servers.read")
+          else
+            require_permission!("endpoints.write")
+          end
+        end
+
+      end
+    end
+  end
+end
