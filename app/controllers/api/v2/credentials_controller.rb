@@ -60,9 +60,6 @@ module API
 
       def find_credential
         @server.credentials.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Credential not found")
-        nil
       end
 
       def credential_params

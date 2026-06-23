@@ -65,9 +65,6 @@ module API
 
       def find_route
         @server.routes.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Route not found")
-        nil
       end
 
       def route_params

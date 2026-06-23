@@ -28,8 +28,6 @@ module API
             bad_dns: bad_dns,
           },
         })
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Server not found")
       end
 
       # GET /api/v2/stats/organization/:org_permalink
@@ -53,8 +51,6 @@ module API
           total_servers: servers.count,
           servers: server_stats,
         })
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Organization not found")
       end
 
       private

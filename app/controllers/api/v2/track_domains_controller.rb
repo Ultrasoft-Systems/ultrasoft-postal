@@ -72,9 +72,6 @@ module API
 
       def find_domain
         @server.track_domains.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Track domain not found")
-        nil
       end
 
       def domain_params

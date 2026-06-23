@@ -69,17 +69,12 @@ module API
         else
           render_validation_error(invite)
         end
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Organization not found")
       end
 
       private
 
       def find_user
         User.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("User not found")
-        nil
       end
 
       def user_params

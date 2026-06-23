@@ -55,9 +55,6 @@ module API
 
       def find_pool
         IPPool.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("IP pool not found")
-        nil
       end
 
       def pool_params

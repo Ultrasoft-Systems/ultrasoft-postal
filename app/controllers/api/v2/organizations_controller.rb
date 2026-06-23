@@ -77,9 +77,6 @@ module API
 
         org = scope.find_by_permalink!(params[:permalink])
         org
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Organization not found")
-        nil
       end
 
       def organization_params

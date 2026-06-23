@@ -92,9 +92,6 @@ module API
 
       def find_domain
         @server.domains.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Domain not found")
-        nil
       end
 
       def domain_params

@@ -44,8 +44,6 @@ module API
         else
           render_not_found("User not found in this organization")
         end
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("User not found")
       end
 
       private

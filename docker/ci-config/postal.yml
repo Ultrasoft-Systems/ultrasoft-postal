@@ -1,0 +1,104 @@
+version: 2
+
+postal:
+  web_hostname: postal.example.com
+  web_protocol: http
+  smtp_hostname: postal.example.com
+  use_ip_pools: false
+  default_maximum_delivery_attempts: 18
+  default_maximum_hold_expiry_days: 7
+  default_spam_threshold: 5
+  default_spam_failure_threshold: 20
+  use_local_ns_for_domain_verification: true
+  use_resent_sender_header: true
+  signing_key_path: /config/signing.key
+  trusted_proxies: []
+  smtp_relays: []
+
+web_server:
+  default_port: 5000
+  default_bind_address: 0.0.0.0
+  max_threads: 5
+
+worker:
+  default_health_server_port: 9090
+  default_health_server_bind_address: 127.0.0.1
+  threads: 2
+
+main_db:
+  host: mariadb
+  port: 3306
+  username: root
+  password: ""
+  database: postal
+  pool_size: 5
+  encoding: utf8mb4
+
+message_db:
+  host: mariadb
+  port: 3306
+  username: root
+  password: ""
+  encoding: utf8mb4
+  database_name_prefix: postal
+
+logging:
+  rails_log_enabled: false
+  enabled: true
+  highlighting_enabled: false
+
+gelf:
+  host: ""
+  port: 12201
+
+smtp_server:
+  default_port: 25
+  default_bind_address: "::"
+  tls_enabled: false
+  proxy_protocol: false
+  log_connections: false
+  max_message_size: 14
+
+dns:
+  mx_records:
+    - mx1.postal.example.com
+    - mx2.postal.example.com
+  spf_include: spf.postal.example.com
+  return_path_domain: rp.postal.example.com
+  route_domain: routes.postal.example.com
+  track_domain: track.postal.example.com
+  helo_hostname: postal.example.com
+  dkim_identifier: postal
+  domain_verify_prefix: postal-verification
+  custom_return_path_prefix: psrp
+  timeout: 5
+
+smtp:
+  host: 127.0.0.1
+  port: 25
+  username: ""
+  password: ""
+  authentication_type: login
+  enable_starttls: false
+  enable_starttls_auto: true
+  openssl_verify_mode: peer
+  from_name: Postal
+  from_address: postal@example.com
+
+rails:
+  environment: test
+  secret_key: abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890
+  hosts:
+    - localhost
+    - localhost:5100
+    - 127.0.0.1
+    - 127.0.0.1:5100
+
+rspamd:
+  enabled: false
+
+spamd:
+  enabled: false
+
+clamav:
+  enabled: false

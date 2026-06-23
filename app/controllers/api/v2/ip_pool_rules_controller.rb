@@ -51,9 +51,6 @@ module API
 
       def find_rule
         @server.ip_pool_rules.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("IP pool rule not found")
-        nil
       end
 
       def rule_params

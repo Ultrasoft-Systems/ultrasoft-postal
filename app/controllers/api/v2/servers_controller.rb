@@ -122,9 +122,6 @@ module API
       def find_server
         server = @organization.servers.present.find_by_permalink!(params[:permalink])
         server
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Server not found")
-        nil
       end
 
       def server_params

@@ -27,6 +27,9 @@ module API
       before_action :authenticate!
       before_action :set_pagination_defaults
 
+      rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
+      rescue_from Postal::MessageDB::Message::NotFound, with: :render_record_not_found
+
       # ---------------------------------------------------------------------------
       # Permission catalog — all available API permission keys
       # ---------------------------------------------------------------------------
@@ -283,6 +286,10 @@ module API
 
       def render_not_found(message = "Resource not found")
         render_error(message, code: "NOT_FOUND", status: :not_found)
+      end
+
+      def render_record_not_found
+        render_not_found
       end
 
       def render_forbidden(message = "You do not have permission to perform this action")

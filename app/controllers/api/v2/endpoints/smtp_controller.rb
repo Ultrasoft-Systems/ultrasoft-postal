@@ -53,9 +53,6 @@ module API
 
         def find_endpoint
           @server.smtp_endpoints.find_by_uuid!(params[:uuid])
-        rescue ActiveRecord::RecordNotFound
-          render_not_found("SMTP endpoint not found")
-          nil
         end
 
         def endpoint_params

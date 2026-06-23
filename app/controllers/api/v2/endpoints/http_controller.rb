@@ -48,9 +48,6 @@ module API
 
         def find_endpoint
           @server.http_endpoints.find_by_uuid!(params[:uuid])
-        rescue ActiveRecord::RecordNotFound
-          render_not_found("HTTP endpoint not found")
-          nil
         end
 
         def endpoint_params

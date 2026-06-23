@@ -36,8 +36,6 @@ module API
         token = APIToken.find_by_uuid!(params[:uuid])
         token.revoke
         render_destroyed
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("API token not found")
       end
 
       private

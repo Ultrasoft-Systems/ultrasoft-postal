@@ -211,9 +211,6 @@ module API
 
       def find_message
         @server.message_db.message(params[:id])
-      rescue Postal::MessageDB::Message::NotFound
-        render_not_found("Message not found")
-        nil
       end
 
       def base_filters

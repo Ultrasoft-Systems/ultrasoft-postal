@@ -83,17 +83,12 @@ module API
           uuid: request.uuid,
           retried: true,
         })
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Webhook request not found")
       end
 
       private
 
       def find_webhook
         @server.webhooks.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("Webhook not found")
-        nil
       end
 
       def webhook_params

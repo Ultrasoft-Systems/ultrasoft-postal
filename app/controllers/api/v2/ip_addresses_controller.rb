@@ -50,9 +50,6 @@ module API
 
       def find_pool
         IPPool.find(params[:ip_pool_id])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("IP pool not found")
-        nil
       end
 
       def find_address
@@ -60,9 +57,6 @@ module API
         return unless pool
 
         pool.ip_addresses.find_by_uuid!(params[:uuid])
-      rescue ActiveRecord::RecordNotFound
-        render_not_found("IP address not found")
-        nil
       end
 
       def address_params
