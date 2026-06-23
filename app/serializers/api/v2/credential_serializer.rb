@@ -17,7 +17,7 @@ module API
         updated_at: ->(c) { c.updated_at&.iso8601 },
       }.freeze
 
-      DEFAULT_FIELDS = %i[uuid name type hold usage_type last_used_at created_at].freeze
+      DEFAULT_FIELDS = %i[uuid name type key hold usage_type last_used_at created_at].freeze
 
       INCLUSIONS = {}.freeze
 

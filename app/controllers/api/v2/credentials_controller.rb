@@ -12,8 +12,9 @@ module API
       def index
         credentials = @server.credentials.order(:type, :name)
         result = paginate(credentials)
+        show_full = has_permission?("credentials.write") || has_permission?("*")
         render_paginated(
-          CredentialSerializer.serialize_collection(result[:records]),
+          CredentialSerializer.serialize_collection(result[:records], context: { show_sensitive: show_full }),
           result,
         )
       end
