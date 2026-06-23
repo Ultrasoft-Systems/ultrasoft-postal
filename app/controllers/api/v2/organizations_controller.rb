@@ -63,12 +63,10 @@ module API
       end
 
       # GET /api/v2/organizations/:permalink/domains
+      # Returns ONLY domains owned directly by the organization (owner_type: 'Organization')
       def domains
         org = find_organization
-        org_domains = org.domains
-        server_domains = org.servers.present.flat_map(&:domains)
-        all_domains = (org_domains + server_domains).uniq(&:id)
-        result = paginate_array(all_domains)
+        result = paginate(org.domains.order(:name))
         render_paginated(
           DomainSerializer.serialize_collection(result[:records]),
           result,

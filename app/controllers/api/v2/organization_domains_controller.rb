@@ -7,7 +7,19 @@ module API
       before_action :require_organization!
       before_action :check_permission!
 
-      # DELETE /api/v2/organizations/:org_permalink/domains/:uuid
+      # POST /api/v2/organizations/:permalink/domains
+      def create
+        skip_verify = params.delete(:skip_verification)
+        domain = @organization.domains.build(domain_params)
+        if domain.save
+          domain.update!(verified_at: Time.current) if skip_verify && has_permission?("*")
+          render_created DomainSerializer.serialize(domain)
+        else
+          render_validation_error(domain)
+        end
+      end
+
+      # DELETE /api/v2/organizations/:permalink/domains/:uuid
       def destroy
         domain = find_domain
         domain.destroy!
@@ -53,8 +65,16 @@ module API
         @organization = Organization.present.find_by_permalink!(permalink)
       end
 
+      def domain_params
+        params.permit(:name, :verification_method, :outgoing, :incoming, :use_for_any, :skip_verification)
+      end
+
       def check_permission!
-        require_permission!("domains.write")
+        if action_name.in?(%w[create destroy])
+          require_permission!("domains.write")
+        else
+          require_any_permission!("domains.read", "servers.read")
+        end
       end
 
     end
