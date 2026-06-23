@@ -175,6 +175,10 @@ module API
       def resolve_organization
         if @current_organization
           @organization = @current_organization
+        elsif params[:org_permalink].present?
+          # URL parameter takes precedence — enables wildcard tokens
+          # to manage multiple organizations
+          @organization = Organization.present.find_by_permalink!(params[:org_permalink])
         elsif @current_server
           @organization = @current_server.organization
         elsif @current_api_token&.scope == "user"
