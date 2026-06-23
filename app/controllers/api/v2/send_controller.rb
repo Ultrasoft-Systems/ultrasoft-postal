@@ -6,7 +6,7 @@ module API
     # Both structured message sending and raw RFC2822 sending are supported.
     class SendController < BaseController
 
-      before_action :require_send_permission!
+      before_action :check_send_permission!
 
       # POST /api/v2/send/message
       #
@@ -143,7 +143,7 @@ module API
         attrs
       end
 
-      def require_send_permission!
+      def check_send_permission!
         require_permission!("messages.send")
       end
 

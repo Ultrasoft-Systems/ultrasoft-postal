@@ -6,7 +6,7 @@ module API
 
       before_action :require_organization!
       before_action :require_server!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/org/:org_permalink/servers/:permalink/webhooks
       def index
@@ -99,7 +99,7 @@ module API
         permitted
       end
 
-      def require_permission!
+      def check_read_permission!
         if action_name == "index" || action_name == "show" || action_name == "history"
           require_any_permission!("webhooks.read", "servers.read")
         else

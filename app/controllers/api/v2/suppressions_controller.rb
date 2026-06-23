@@ -5,7 +5,7 @@ module API
     class SuppressionsController < BaseController
 
       before_action :require_server!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/suppressions
       def index
@@ -64,7 +64,7 @@ module API
 
       private
 
-      def require_permission!
+      def check_read_permission!
         if action_name == "index"
           require_permission!("suppressions.read")
         else

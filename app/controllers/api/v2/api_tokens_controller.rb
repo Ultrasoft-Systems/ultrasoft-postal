@@ -4,7 +4,7 @@ module API
   module V2
     class ApiTokensController < BaseController
 
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/auth/tokens
       def index
@@ -73,7 +73,7 @@ module API
         end || {}
       end
 
-      def require_permission!
+      def check_read_permission!
         require_permission!("api_tokens.manage")
       end
 

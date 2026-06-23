@@ -5,9 +5,9 @@ module API
     class ServersController < BaseController
 
       before_action :require_organization!
-      before_action :require_permission!, only: [:index, :show, :queue, :limits, :stats]
-      before_action :require_write_permission!, only: [:create, :update, :destroy]
-      before_action :require_suspend_permission!, only: [:suspend, :unsuspend]
+      before_action :check_read_permission!, only: [:index, :show, :queue, :limits, :stats]
+      before_action :check_write_permission!, only: [:create, :update, :destroy]
+      before_action :check_suspend_permission!, only: [:suspend, :unsuspend]
 
       # GET /api/v2/org/:org_permalink/servers
       def index
@@ -134,15 +134,15 @@ module API
         )
       end
 
-      def require_permission!
+      def check_read_permission!
         require_any_permission!("servers.read", "organizations.read")
       end
 
-      def require_write_permission!
+      def check_write_permission!
         require_permission!("servers.write")
       end
 
-      def require_suspend_permission!
+      def check_suspend_permission!
         require_permission!("servers.suspend")
       end
 

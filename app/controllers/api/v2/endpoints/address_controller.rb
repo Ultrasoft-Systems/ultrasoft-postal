@@ -7,7 +7,7 @@ module API
 
         before_action :require_organization!
         before_action :require_server!
-        before_action :require_permission!
+        before_action :check_read_permission!
 
         def index
           endpoints = @server.address_endpoints.order(:address)
@@ -65,7 +65,7 @@ module API
           }
         end
 
-        def require_permission!
+        def check_read_permission!
           if action_name.in?(%w[index show])
             require_any_permission!("endpoints.read", "servers.read")
           else

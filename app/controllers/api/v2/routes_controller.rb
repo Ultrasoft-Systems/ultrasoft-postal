@@ -6,7 +6,7 @@ module API
 
       before_action :require_organization!
       before_action :require_server!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/org/:org_permalink/servers/:permalink/routes
       def index
@@ -71,7 +71,7 @@ module API
         params.permit(:name, :domain_id, :_endpoint, :spam_mode)
       end
 
-      def require_permission!
+      def check_read_permission!
         if action_name == "index" || action_name == "show"
           require_any_permission!("routes.read", "servers.read")
         else

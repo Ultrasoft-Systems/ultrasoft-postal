@@ -4,7 +4,7 @@ module API
   module V2
     class IpAddressesController < BaseController
 
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/ip_pools/:ip_pool_id/ip_addresses
       def index
@@ -76,7 +76,7 @@ module API
         }
       end
 
-      def require_permission!
+      def check_read_permission!
         if action_name.in?(%w[index show])
           require_permission!("ip_pools.read")
         else

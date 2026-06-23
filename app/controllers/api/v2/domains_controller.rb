@@ -6,9 +6,9 @@ module API
 
       before_action :require_organization!
       before_action :require_server!
-      before_action :require_permission!, only: [:index, :show]
-      before_action :require_write_permission!, only: [:create, :destroy]
-      before_action :require_verify_permission!, only: [:verify, :check_dns]
+      before_action :check_read_permission!, only: [:index, :show]
+      before_action :check_write_permission!, only: [:create, :destroy]
+      before_action :check_verify_permission!, only: [:verify, :check_dns]
 
       # GET /api/v2/org/:org_permalink/servers/:permalink/domains
       def index
@@ -98,15 +98,15 @@ module API
         params.permit(:name, :verification_method, :outgoing, :incoming, :use_for_any)
       end
 
-      def require_permission!
+      def check_read_permission!
         require_any_permission!("domains.read", "servers.read")
       end
 
-      def require_write_permission!
+      def check_write_permission!
         require_permission!("domains.write")
       end
 
-      def require_verify_permission!
+      def check_verify_permission!
         require_permission!("domains.verify")
       end
 

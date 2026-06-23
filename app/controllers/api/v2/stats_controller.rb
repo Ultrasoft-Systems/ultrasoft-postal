@@ -4,7 +4,7 @@ module API
   module V2
     class StatsController < BaseController
 
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/stats/server/:org_permalink/:server_permalink
       def server
@@ -65,7 +65,7 @@ module API
         end
       end
 
-      def require_permission!
+      def check_read_permission!
         require_permission!("stats.read")
       end
 

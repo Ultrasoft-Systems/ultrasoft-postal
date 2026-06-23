@@ -6,7 +6,7 @@ module API
 
       before_action :require_organization!
       before_action :require_server!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/org/:org_permalink/servers/:permalink/track_domains
       def index
@@ -90,7 +90,7 @@ module API
         }
       end
 
-      def require_permission!
+      def check_read_permission!
         if action_name.in?(%w[index])
           require_any_permission!("servers.read")
         else

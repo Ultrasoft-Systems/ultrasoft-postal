@@ -8,7 +8,7 @@ module API
     class MessagesController < BaseController
 
       before_action :require_server!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/messages/outgoing
       def outgoing
@@ -159,7 +159,7 @@ module API
 
       # POST /api/v2/messages/:id/retry
       def retry
-        require_manage_permission!
+        check_manage_permission!
 
         message = find_message
         queued = QueuedMessage.find_by(message_id: message.id)
@@ -175,7 +175,7 @@ module API
 
       # POST /api/v2/messages/:id/cancel_hold
       def cancel_hold
-        require_manage_permission!
+        check_manage_permission!
 
         message = find_message
         queued = QueuedMessage.find_by(message_id: message.id)
@@ -195,7 +195,7 @@ module API
 
       # DELETE /api/v2/messages/:id
       def destroy
-        require_manage_permission!
+        check_manage_permission!
 
         queued = QueuedMessage.find_by(message_id: params[:id])
         unless queued
@@ -260,7 +260,7 @@ module API
         })
       end
 
-      def require_permission!
+      def check_read_permission!
         if action_name.in?(%w[retry cancel_hold destroy])
           # checked separately in each action
           require_any_permission!("messages.read", "messages.send")
@@ -269,7 +269,7 @@ module API
         end
       end
 
-      def require_manage_permission!
+      def check_manage_permission!
         require_permission!("messages.manage")
       end
 

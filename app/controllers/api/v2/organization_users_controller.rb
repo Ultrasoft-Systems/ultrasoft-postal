@@ -5,7 +5,7 @@ module API
     class OrganizationUsersController < BaseController
 
       before_action :require_organization!
-      before_action :require_permission!
+      before_action :check_read_permission!
 
       # GET /api/v2/organizations/:permalink/users
       def index
@@ -48,7 +48,7 @@ module API
 
       private
 
-      def require_permission!
+      def check_read_permission!
         if action_name == "index"
           require_any_permission!("users.read", "organizations.read")
         else

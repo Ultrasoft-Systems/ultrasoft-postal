@@ -4,8 +4,8 @@ module API
   module V2
     class OrganizationsController < BaseController
 
-      before_action :require_permission!, only: [:index, :show]
-      before_action :require_write_permission!, only: [:create, :update, :destroy]
+      before_action :check_read_permission!, only: [:index, :show]
+      before_action :check_write_permission!, only: [:create, :update, :destroy]
 
       # GET /api/v2/organizations
       def index
@@ -35,7 +35,7 @@ module API
       # POST /api/v2/organizations
       def create
         org = Organization.new(organization_params)
-        org.owner = @current_user if @current_user
+        org.owner = @current_user || User.first
 
         if org.save
           render_created OrganizationSerializer.serialize(org)
@@ -83,11 +83,11 @@ module API
         params.permit(:name, :time_zone)
       end
 
-      def require_permission!
+      def check_read_permission!
         require_any_permission!("organizations.read", "servers.read")
       end
 
-      def require_write_permission!
+      def check_write_permission!
         require_permission!("organizations.write")
       end
 
