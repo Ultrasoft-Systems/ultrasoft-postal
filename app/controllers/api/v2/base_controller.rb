@@ -17,6 +17,9 @@ module API
     #
     class BaseController < ActionController::Base
 
+      include Concerns::RateLimitable
+      include Concerns::AuditLoggable
+
       skip_before_action :set_browser_id
       skip_before_action :verify_authenticity_token
 
