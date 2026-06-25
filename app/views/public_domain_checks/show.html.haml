@@ -1,0 +1,103 @@
+- page_title << "DNS Check"
+- page_title << @domain.name
+
+.pageContent.pageContent--compact
+  %h2.pageContent__title DNS Setup for #{@domain.name}
+  %p.pageContent__intro.u-margin
+    Follow the instructions below to configure DNS records for
+    %b= @domain.name
+    and verify everything is set up correctly.
+
+  - unless @domain.verified?
+    .u-margin
+      %h3.pageContent__subTitle Domain Verification
+      %p.pageContent__text
+        Before configuring DNS records, you need to verify ownership of this domain
+        by adding a TXT record with the following value:
+
+      %pre.codeBlock.u-margin= @domain.dns_verification_string
+
+      %p.pageContent__text
+        Once you've added this record, click the button below to verify.
+
+      .buttonSet.u-margin
+        = link_to "Verify TXT record", public_domain_check_verify_path(@domain.public_token), method: :post, class: "button"
+
+  - if @domain.verified?
+    .u-margin
+      %p.pageContent__text.u-green.u-bold
+        %span.label.label--green Verified
+        Domain ownership has been verified.
+
+    .u-margin.buttonSet
+      = link_to "Check my records are correct", public_domain_check_dns_path(@domain.public_token), method: :post, class: "button"
+    - if @domain.dns_checked_at
+      %p.u-margin DNS records were last checked #{distance_of_time_in_words_to_now @domain.dns_checked_at} ago.
+
+    %h3.pageContent__subTitle SPF Record
+    - if @domain.spf_status == 'OK'
+      %p.pageContent__text.u-green.u-bold
+        %span.label.label--green Good
+        Your SPF record looks good!
+    - elsif !@domain.spf_status.nil?
+      %p.pageContent__text.u-orange.u-bold
+        %span.label.label--orange Warning
+        = @domain.spf_error
+
+    %p.pageContent__text
+      You need to add a TXT record at the apex/root of your domain (@) with the following
+      content. If you already send mail from another service, you may just need to add
+      <b>include:#{Postal::Config.dns.spf_include}</b> to your existing record.
+    %pre.codeBlock.u-margin= @domain.spf_record
+
+    %h3.pageContent__subTitle DKIM Record
+    - if @domain.dkim_status == 'OK'
+      %p.pageContent__text.u-green.u-bold
+        %span.label.label--green Good
+        Your DKIM record looks good!
+    - elsif !@domain.dkim_status.nil?
+      %p.pageContent__text.u-orange.u-bold
+        %span.label.label--orange Warning
+        = @domain.dkim_error
+
+    %p.pageContent__text
+      You need to add a new TXT record with the name <b>#{@domain.dkim_record_name}</b>
+      with the following content.
+    %pre.codeBlock.u-margin= @domain.dkim_record
+
+    %h3.pageContent__subTitle Return Path
+    - if @domain.return_path_status == 'OK'
+      %p.pageContent__text.u-green.u-bold
+        %span.label.label--green Good
+        Your return path looks good.
+    - elsif @domain.return_path_status == 'Missing'
+      %p.pageContent__text.u-grey.u-bold
+        %span.label.label--grey OK
+        There's no return path for this domain. This is OK but we recommend adding the record to improve deliverability.
+    - elsif !@domain.return_path_status.nil?
+      %p.pageContent__text.u-orange.u-bold
+        %span.label.label--orange Warning
+        = @domain.return_path_error
+
+    %p.pageContent__text
+      This is optional but recommended. Add a <b>CNAME</b> record at
+      <b>#{@domain.return_path_domain}</b> pointing to:
+    %pre.codeBlock.u-margin= Postal::Config.dns.return_path_domain
+
+    %h3.pageContent__subTitle MX Records
+    - if @domain.mx_status == 'OK'
+      %p.pageContent__text.u-green.u-bold
+        %span.label.label--green Good
+        Your MX records look good!
+    - elsif @domain.mx_status == 'Missing'
+      %p.pageContent__text.u-grey.u-bold
+        %span.label.label--grey OK
+        No MX records point to us. Incoming mail won't be received.
+    - elsif !@domain.mx_status.nil?
+      %p.pageContent__text.u-orange.u-bold
+        %span.label.label--orange Warning
+        = @domain.mx_error
+
+    %p.pageContent__text
+      If you wish to receive incoming e-mail, add the following MX records with priority <b>10</b>.
+    %pre.codeBlock.u-margin= Postal::Config.dns.mx_records.join("\n")

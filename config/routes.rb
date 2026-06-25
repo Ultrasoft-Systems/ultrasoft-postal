@@ -97,6 +97,11 @@ Rails.application.routes.draw do
 
   get ".well-known/jwks.json" => "well_known#jwks"
 
+  # Public domain DNS check (token-based, no login required)
+  get "domain-check/:token" => "public_domain_checks#show", as: "public_domain_check"
+  post "domain-check/:token/verify" => "public_domain_checks#verify", as: "public_domain_check_verify"
+  post "domain-check/:token/check" => "public_domain_checks#check", as: "public_domain_check_dns"
+
   get "ip" => "sessions#ip"
 
   root "organizations#index"

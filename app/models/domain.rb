@@ -58,6 +58,7 @@ class Domain < ApplicationRecord
   random_string :dkim_identifier_string, type: :chars, length: 6, unique: true, upper_letters_only: true
 
   before_create :generate_dkim_key
+  before_create :generate_public_token
 
   scope :verified, -> { where.not(verified_at: nil) }
 
@@ -158,7 +159,15 @@ class Domain < ApplicationRecord
     false
   end
 
+  def public_check_url
+    "#{Postal.host_with_protocol}/domain-check/#{public_token}"
+  end
+
   private
+
+  def generate_public_token
+    self.public_token = SecureRandom.alphanumeric(24)
+  end
 
   def update_verification_token_on_method_change
     return unless verification_method_changed?
