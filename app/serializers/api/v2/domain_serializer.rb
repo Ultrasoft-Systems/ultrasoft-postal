@@ -26,6 +26,8 @@ module API
         dkim_record: :dkim_record,
         dkim_record_name: :dkim_record_name,
         spf_record: :spf_record,
+        mx_records: :mx_records,
+        return_path_target: :return_path_target,
         dns_checked_at: ->(d) { d.dns_checked_at&.iso8601 },
         return_path_domain: :return_path_domain,
         created_at: ->(d) { d.created_at&.iso8601 },
@@ -36,6 +38,7 @@ module API
         uuid name verified verification_method outgoing incoming
         spf_status dkim_status mx_status return_path_status
         spf_record dkim_record dkim_record_name dkim_identifier
+        mx_records return_path_target
         return_path_domain dns_checked_at created_at
       ].freeze
 

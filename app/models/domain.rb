@@ -131,6 +131,14 @@ class Domain < ApplicationRecord
     "#{Postal::Config.dns.custom_return_path_prefix}.#{name}"
   end
 
+  def return_path_target
+    Postal::Config.dns.return_path_domain
+  end
+
+  def mx_records
+    Postal::Config.dns.mx_records
+  end
+
   # Returns a DNSResolver instance that can be used to perform DNS lookups needed for
   # the verification and DNS checking for this domain.
   #
